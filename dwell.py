@@ -7,8 +7,9 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 class DwellClicker:
-    def __init__(self, gui_root, dwell_time=2.0):
+    def __init__(self, gui_root, dwell_time=2.0, radius=5):
         self.dwell_time = dwell_time
+        self.radius = radius
         self.mouse_controller = Controller()
         self.dwell_timer = None
         self.last_position = None
@@ -17,9 +18,14 @@ class DwellClicker:
         self.active = False
 
     def on_move(self, x, y):
-        if self.last_position != (x, y):
-            self.reset_timer()
-        self.last_position = (x, y)
+        if self.last_position:
+            dx = x - self.last_position[0]
+            dy = y - self.last_position[1]
+            if dx*dx + dy*dy > self.radius*self.radius:
+                self.reset_timer()
+                self.last_position = (x, y)
+        else:
+            self.last_position = (x, y)
 
     def on_click(self, x, y, button, pressed):
         if pressed:
