@@ -34,7 +34,6 @@ class DwellClicker:
     def reset_timer(self, cancel_only=False):
         if self.dwell_timer is not None:
             self.dwell_timer.cancel()
-
         if not cancel_only and self.active:
             self.dwell_timer = Timer(self.dwell_time, self.perform_click)
             self.dwell_timer.start()
@@ -67,6 +66,14 @@ class DwellClicker:
             self.dwell_time = time
             self.gui_root.dwell_label.config(text=f"Dwell Time: {self.dwell_time} seconds")
 
+    def update_radius(self):
+        radius = simpledialog.askinteger("Input", "Set ignore radius (pixels):",
+                                         parent=self.gui_root.window,
+                                         minvalue=1, maxvalue=50)
+        if radius is not None:
+            self.radius = radius
+            self.gui_root.radius_label.config(text=f"Ignore Radius: {self.radius} pixels")
+
 class GUI:
     def __init__(self, root):
         self.window = root
@@ -81,6 +88,12 @@ class GUI:
         self.dwell_label = tk.Label(self.window, text="Dwell Time: 2.0 seconds")
         self.dwell_label.pack(pady=10)
 
+        self.radius_button = tk.Button(self.window, text="Set Ignore Radius", command=self.update_radius)
+        self.radius_button.pack(pady=20)
+
+        self.radius_label = tk.Label(self.window, text="Ignore Radius: 5 pixels")
+        self.radius_label.pack(pady=10)
+
         self.status_label = tk.Label(self.window, text="Dwell Clicker stopped.")
         self.status_label.pack(pady=10)
 
@@ -91,6 +104,9 @@ class GUI:
 
     def update_dwell_time(self):
         self.clicker.update_dwell_time()
+
+    def update_radius(self):
+        self.clicker.update_radius()
 
 def main():
     root = tk.Tk()
