@@ -6,8 +6,16 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 
+# Constants for default values
+DEFAULT_DWELL_TIME = 2.0
+DEFAULT_RADIUS = 5
+MIN_DWELL_TIME = 0.1
+MAX_DWELL_TIME = 10.0
+MIN_RADIUS = 1
+MAX_RADIUS = 50
+
 class DwellClicker:
-    def __init__(self, gui_root, dwell_time=2.0, radius=5):
+    def __init__(self, gui_root, dwell_time=DEFAULT_DWELL_TIME, radius=DEFAULT_RADIUS):
         self.dwell_time = dwell_time
         self.radius = radius
         self.mouse_controller = Controller()
@@ -61,7 +69,7 @@ class DwellClicker:
     def update_dwell_time(self):
         time = simpledialog.askfloat("Input", "Set dwell time (seconds):",
                                      parent=self.gui_root.window,
-                                     minvalue=0.1, maxvalue=10.0)
+                                     minvalue=MIN_DWELL_TIME, maxvalue=MAX_DWELL_TIME)
         if time is not None:
             self.dwell_time = time
             self.gui_root.dwell_label.config(text=f"Dwell Time: {self.dwell_time} seconds")
@@ -69,7 +77,7 @@ class DwellClicker:
     def update_radius(self):
         radius = simpledialog.askinteger("Input", "Set ignore radius (pixels):",
                                          parent=self.gui_root.window,
-                                         minvalue=1, maxvalue=50)
+                                         minvalue=MIN_RADIUS, maxvalue=MAX_RADIUS)
         if radius is not None:
             self.radius = radius
             self.gui_root.radius_label.config(text=f"Ignore Radius: {self.radius} pixels")
@@ -85,13 +93,13 @@ class GUI:
         self.dwell_button = tk.Button(self.window, text="Set Dwell Time", command=self.update_dwell_time)
         self.dwell_button.pack(pady=20)
 
-        self.dwell_label = tk.Label(self.window, text="Dwell Time: 2.0 seconds")
+        self.dwell_label = tk.Label(self.window, text=f"Dwell Time: {DEFAULT_DWELL_TIME} seconds")
         self.dwell_label.pack(pady=10)
 
         self.radius_button = tk.Button(self.window, text="Set Ignore Radius", command=self.update_radius)
         self.radius_button.pack(pady=20)
 
-        self.radius_label = tk.Label(self.window, text="Ignore Radius: 5 pixels")
+        self.radius_label = tk.Label(self.window, text=f"Ignore Radius: {DEFAULT_RADIUS} pixels")
         self.radius_label.pack(pady=10)
 
         self.status_label = tk.Label(self.window, text="Dwell Clicker stopped.")
